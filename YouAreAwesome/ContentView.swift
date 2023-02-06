@@ -10,21 +10,11 @@ import SwiftUI
 struct ContentView: View {
     @State private var messageString = ""
     @State private var imageName = ""
-    @State private var imageNum = 0
-    @State private var messageNum = 0
+    @State private var lastMessageNumber = -1
+    @State private var lastImageNumber = -1
     
     var body: some View {
         VStack {
-            
-            Image(imageName)
-                .resizable()
-                .scaledToFit()
-                .cornerRadius(30)
-                .shadow(radius: 30)
-                .padding()
-            
-            
-            Spacer()
             
             Text(messageString)
                 .font(.largeTitle)
@@ -34,6 +24,15 @@ struct ContentView: View {
                 .foregroundColor(.red)
                 .frame(height: 150)
                 .frame(maxWidth: .infinity)
+                .padding()
+            
+            Spacer()
+            
+            Image(imageName)
+                .resizable()
+                .scaledToFit()
+                .cornerRadius(30)
+                .shadow(radius: 30)
                 .padding()
             
             Spacer()
@@ -48,34 +47,21 @@ struct ContentView: View {
                     var messages: [String] = []
                     messages += [message1, message2, message3, message4]
                     
-                    messageString = messages[messageNum]
-                    messageNum += 1
+                    // using repeat
+                    var messageNumber: Int
+                    repeat {
+                        messageNumber = Int.random(in: 0...messages.count-1)
+                    } while messageNumber == lastMessageNumber
+                    messageString = messages[messageNumber]
+                    lastMessageNumber = messageNumber
                     
-                    if messageNum == messages.count
-                    {
-                        messageNum = 0
+                    // using while
+                    var imageNumber = Int.random(in: 0...9)
+                    while imageNumber == lastImageNumber {
+                        imageNumber = Int.random(in: 0...9)
                     }
-                    
-//                    if messageString == message1
-//                    {
-//                        messageString = message2
-//                    }
-//                    else if messageString == message2
-//                    {
-//                        messageString = message3
-//                    } else
-//                    {
-//                        messageString = message1
-//                    }
-                    
-                    imageName = "image\(String(imageNum))"
-                    imageNum = imageNum + 1
-                    if imageNum > 9
-                    {
-                        imageNum = 0
-                    }
-                    print(imageNum)
-                    
+                    imageName = "image\(imageNumber)"
+                    lastImageNumber = imageNumber
                 }
                 .buttonStyle(.borderedProminent)
             }
