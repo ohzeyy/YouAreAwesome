@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var lastImageNumber = -1
     @State private var lastSoundNumber = -1
     @State private var audioPlayer: AVAudioPlayer!
+    @State private var soundIsOn = true
     
     var body: some View {
         VStack {
@@ -28,6 +29,7 @@ struct ContentView: View {
                 .frame(height: 150)
                 .frame(maxWidth: .infinity)
                 .padding()
+                .animation(.easeInOut(duration: 0.15), value: messageString)
             
             Spacer()
             
@@ -37,10 +39,23 @@ struct ContentView: View {
                 .cornerRadius(30)
                 .shadow(radius: 30)
                 .padding()
+                .animation(.default, value: messageString)
             
             Spacer()
             
             HStack {
+                Text("Sound On:")
+                
+                Toggle("Sound On:", isOn: $soundIsOn)
+                    .labelsHidden()
+                    .onChange(of: soundIsOn) { _ in
+                        if audioPlayer != nil && audioPlayer.isPlaying {
+                            audioPlayer.stop()
+                        }
+                    }
+                
+                Spacer()
+                
                 Button("Show message") {
                     let message1 = "You are awesome!"
                     let message2 = "You are great!"
@@ -57,35 +72,39 @@ struct ContentView: View {
                     imageName = "image\(lastImageNumber)"
                     
                     lastSoundNumber = nonRepeatingRandom(lastNumber: lastSoundNumber, upperBound: 5)
-                    playSound(soundName: "sound\(lastSoundNumber)")
+                    if soundIsOn {
+                        playSound(soundName: "sound\(lastSoundNumber)")
+                    }
                     
-//                    // using repeat
-//                    var messageNumber: Int
-//                    repeat {
-//                        messageNumber = Int.random(in: 0...messages.count-1)
-//                    } while messageNumber == lastMessageNumber
-//                    messageString = messages[messageNumber]
-//                    lastMessageNumber = messageNumber
-//
-//                    // using while
-//                    var imageNumber = Int.random(in: 0...9)
-//                    while imageNumber == lastImageNumber {
-//                        imageNumber = Int.random(in: 0...9)
-//                    }
-//                    imageName = "image\(imageNumber)"
-//                    lastImageNumber = imageNumber
-//
-//                    var soundNumber: Int
-//                    repeat {
-//                        soundNumber = Int.random(in: 0...5)
-//                    } while soundNumber == lastSoundNumber
-//                    lastSoundNumber = soundNumber
-//
-//                    playSound(soundName: "sound\(soundNumber)")
+                    
+                    //                    // using repeat
+                    //                    var messageNumber: Int
+                    //                    repeat {
+                    //                        messageNumber = Int.random(in: 0...messages.count-1)
+                    //                    } while messageNumber == lastMessageNumber
+                    //                    messageString = messages[messageNumber]
+                    //                    lastMessageNumber = messageNumber
+                    //
+                    //                    // using while
+                    //                    var imageNumber = Int.random(in: 0...9)
+                    //                    while imageNumber == lastImageNumber {
+                    //                        imageNumber = Int.random(in: 0...9)
+                    //                    }
+                    //                    imageName = "image\(imageNumber)"
+                    //                    lastImageNumber = imageNumber
+                    //
+                    //                    var soundNumber: Int
+                    //                    repeat {
+                    //                        soundNumber = Int.random(in: 0...5)
+                    //                    } while soundNumber == lastSoundNumber
+                    //                    lastSoundNumber = soundNumber
+                    //
+                    //                    playSound(soundName: "sound\(soundNumber)")
                     
                 }
             }
             .buttonStyle(.borderedProminent)
+            .tint(.accentColor)
         }
         .padding()
     }
